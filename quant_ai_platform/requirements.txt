@@ -1,10 +1,8 @@
 streamlit
-yfinance
-plotly
 pandas
 numpy
+yfinance
+plotly
 requests
-torch
-transformers
 ta
 streamlit-autorefresh
