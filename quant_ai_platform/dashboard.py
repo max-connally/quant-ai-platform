@@ -4,32 +4,48 @@ import yfinance as yf
 import plotly.graph_objects as go
 
 from scanner import analyze_stock
+from stock_universe import get_stock_universe
+from sentiment import get_sentiment
+from probability import profit_probability
+from portfolio import build_portfolio
+
 from streamlit_autorefresh import st_autorefresh
 
-# Auto refresh every 60 seconds
-st_autorefresh(interval=60000, key="refresh")
+REFRESH_TIME = 60
+
+count = st_autorefresh(interval=REFRESH_TIME*1000, key="refresh")
+
+st.set_page_config(layout="wide")
 
 st.title("AI Trading Dashboard")
 
-# -----------------------------------
-# STOCK SCANNER
-# -----------------------------------
+seconds_left = REFRESH_TIME - (count % REFRESH_TIME)
 
-st.header("Top AI Stock Opportunities")
+st.info(f"Next refresh in: {seconds_left} seconds")
 
-watchlist = [
-"AAPL","MSFT","NVDA","META","TSLA",
-"AMD","AMZN","GOOGL","NFLX","INTC"
-]
+st.header("Top AI Opportunities")
+
+stocks = get_stock_universe()[:80]
 
 results = []
 
-for stock in watchlist:
+for s in stocks:
 
-    r = analyze_stock(stock)
+    r = analyze_stock(s)
 
     if r:
-        results.append(r)
+
+        sentiment = get_sentiment()
+
+        prob = profit_probability(r["score"])
+
+        results.append({
+            "ticker": r["ticker"],
+            "score": r["score"],
+            "patterns": r["patterns"],
+            "sentiment": sentiment,
+            "profit_probability": f"{int(prob*100)}%"
+        })
 
 df = pd.DataFrame(results)
 
@@ -37,19 +53,17 @@ if not df.empty:
 
     df = df.sort_values("score", ascending=False)
 
-    # create trading signal
     df["signal"] = df["score"].apply(
-        lambda x: "BUY" if x > 1 else "WATCH"
+        lambda x: "BUY" if x > 1.4 else "WATCH"
     )
 
-    st.dataframe(df)
+    st.dataframe(df.head(20), use_container_width=True)
 
-else:
-    st.write("No signals found")
+    st.header("Suggested Portfolio")
 
-# -----------------------------------
-# STOCK CHART
-# -----------------------------------
+    portfolio = build_portfolio(df)
+
+    st.write(portfolio)
 
 st.header("Stock Chart Viewer")
 
@@ -67,4 +81,4 @@ if ticker:
         close=data["Close"]
     )])
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
