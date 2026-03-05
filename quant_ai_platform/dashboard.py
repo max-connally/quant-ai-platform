@@ -51,7 +51,7 @@ for ticker in stocks:
 
     r = analyze_stock(ticker)
 
-    if r:
+    if r is not None:
 
         sentiment = get_sentiment()
 
@@ -110,6 +110,7 @@ if ticker_input:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 
 
