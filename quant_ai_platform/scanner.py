@@ -1,37 +1,40 @@
-from data_engine import load_stock
+import yfinance as yf
 from features import build_features
-from pattern_probability import pattern_probability
 import patterns
 
-from fundamentals import get_fundamental_score
 
+def analyze_stock(ticker):
 
-def analyze_stock(symbol):
+    try:
+        df = yf.download(ticker, period="1y")
 
-    df = load_stock(symbol)
+        if df.empty:
+            return None
 
-    if df is None or len(df) < 100:
+        df = build_features(df)
+
+        pattern_list = []
+        pattern_score = 0
+
+        if patterns.double_bottom(df):
+            pattern_list.append("double_bottom")
+            pattern_score += 0.5
+
+        if patterns.head_shoulders(df):
+            pattern_list.append("head_shoulders")
+            pattern_score += 0.5
+
+        if patterns.cup_handle(df):
+            pattern_list.append("cup_handle")
+            pattern_score += 0.5
+
+        score = pattern_score
+
+        return {
+            "ticker": ticker,
+            "score": score,
+            "patterns": pattern_list
+        }
+
+    except:
         return None
-
-    df = build_features(df)
-
-    detected = []
-
-    if patterns.double_bottom(df):
-        detected.append("double_bottom")
-
-    if patterns.cup_handle(df):
-        detected.append("cup_handle")
-
-    pattern_score = pattern_probability(detected)
-
-    fundamental_score = get_fundamental_score(symbol)
-
-total_score = pattern_score + fundamental_score
-
-    return {
-        "ticker": symbol,
-        "score": total_score,
-        "patterns": detected
-    }
-
