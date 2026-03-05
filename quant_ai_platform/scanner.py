@@ -32,8 +32,8 @@ def analyze_stock(ticker):
             detected_patterns.append("head_shoulders")
 
         # NEW RULE (this helps produce signals)
-        if score < 1.1:
-            return None
+if score < 0.5:
+    return None
 
         return {
             "ticker": ticker,
@@ -43,3 +43,4 @@ def analyze_stock(ticker):
 
     except Exception:
         return None
+
