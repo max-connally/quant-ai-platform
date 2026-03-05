@@ -1,7 +1,8 @@
-from quant_ai_platform.scanner import analyze_stock
-from quant_ai_platform.sentiment import get_sentiment
-from quant_ai_platform.portfolio import build_portfolio
-from quant_ai_platform.stock_universe import get_stock_universe
+from scanner import analyze_stock
+from sentiment import get_sentiment
+from portfolio import build_portfolio
+from stock_universe import get_stock_universe
+from probability import profit_probability
 
 from streamlit_autorefresh import st_autorefresh
 
@@ -104,6 +105,7 @@ if ticker_input:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 
 
