@@ -1,4 +1,6 @@
 import yfinance as yf
+import pandas as pd
+
 from features import build_features
 import patterns
 
@@ -6,35 +8,38 @@ import patterns
 def analyze_stock(ticker):
 
     try:
-        df = yf.download(ticker, period="1y")
 
-        if df.empty:
+        data = yf.download(ticker, period="6mo")
+
+        if data.empty:
             return None
 
-        df = build_features(df)
+        df = build_features(data)
 
-        pattern_list = []
-        pattern_score = 0
+        score = 1.0
+        detected_patterns = []
 
         if patterns.double_bottom(df):
-            pattern_list.append("double_bottom")
-            pattern_score += 0.5
-
-        if patterns.head_shoulders(df):
-            pattern_list.append("head_shoulders")
-            pattern_score += 0.5
+            score += 0.3
+            detected_patterns.append("double_bottom")
 
         if patterns.cup_handle(df):
-            pattern_list.append("cup_handle")
-            pattern_score += 0.5
+            score += 0.4
+            detected_patterns.append("cup_handle")
 
-        score = pattern_score
+        if patterns.head_shoulders(df):
+            score += 0.2
+            detected_patterns.append("head_shoulders")
+
+        # NEW RULE (this helps produce signals)
+        if score < 1.1:
+            return None
 
         return {
             "ticker": ticker,
             "score": score,
-            "patterns": pattern_list
+            "patterns": detected_patterns
         }
 
-    except:
+    except Exception:
         return None
