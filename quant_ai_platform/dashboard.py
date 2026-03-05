@@ -1,12 +1,13 @@
+import os
+import sys
+
+# Ensure Python can find local modules
+sys.path.append(os.path.dirname(__file__))
+
 import streamlit as st
 import pandas as pd
 import yfinance as yf
 import plotly.graph_objects as go
-
-import os
-import sys
-
-sys.path.append(os.path.dirname(__file__))
 
 from scanner import analyze_stock
 from sentiment import get_sentiment
@@ -16,17 +17,35 @@ from stock_universe import get_stock_universe
 
 from streamlit_autorefresh import st_autorefresh
 
+
+# -------------------------------
+# Refresh settings
+# -------------------------------
+
 REFRESH_TIME = 60
 
-count = st_autorefresh(interval=REFRESH_TIME*1000, key="refresh")
-
-st.set_page_config(layout="wide")
-
-st.title("AI Trading Dashboard")
+count = st_autorefresh(interval=REFRESH_TIME * 1000, key="refresh")
 
 seconds_left = REFRESH_TIME - (count % REFRESH_TIME)
 
+
+# -------------------------------
+# Page setup
+# -------------------------------
+
+st.set_page_config(
+    page_title="AI Trading Dashboard",
+    layout="wide"
+)
+
+st.title("AI Trading Dashboard")
+
 st.info(f"Next refresh in: {seconds_left} seconds")
+
+
+# -------------------------------
+# Stock scanner
+# -------------------------------
 
 st.header("Top AI Opportunities")
 
@@ -34,9 +53,9 @@ stocks = get_stock_universe()[:80]
 
 results = []
 
-for s in stocks:
+for ticker in stocks:
 
-    r = analyze_stock(s)
+    r = analyze_stock(ticker)
 
     if r:
 
@@ -49,8 +68,9 @@ for s in stocks:
             "score": r["score"],
             "patterns": r["patterns"],
             "sentiment": sentiment,
-            "profit_probability": f"{int(prob*100)}%"
+            "profit_probability": f"{int(prob * 100)}%"
         })
+
 
 df = pd.DataFrame(results)
 
@@ -70,13 +90,22 @@ if not df.empty:
 
     st.write(portfolio)
 
+else:
+
+    st.warning("No signals found")
+
+
+# -------------------------------
+# Chart viewer
+# -------------------------------
+
 st.header("Stock Chart Viewer")
 
-ticker = st.text_input("Enter stock symbol")
+ticker_input = st.text_input("Enter stock symbol")
 
-if ticker:
+if ticker_input:
 
-    data = yf.download(ticker)
+    data = yf.download(ticker_input)
 
     fig = go.Figure(data=[go.Candlestick(
         x=data.index,
@@ -87,7 +116,3 @@ if ticker:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
-
-
-
-
