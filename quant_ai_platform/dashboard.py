@@ -1,3 +1,8 @@
+import streamlit as st
+import pandas as pd
+import yfinance as yf
+import plotly.graph_objects as go
+
 from scanner import analyze_stock
 from sentiment import get_sentiment
 from portfolio import build_portfolio
@@ -105,6 +110,7 @@ if ticker_input:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 
 
