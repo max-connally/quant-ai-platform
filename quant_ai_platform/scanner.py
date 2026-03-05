@@ -4,7 +4,6 @@ from pattern_probability import pattern_probability
 import patterns
 
 from fundamentals import get_fundamental_score
-from ai_model import predict_price_change
 
 
 def analyze_stock(symbol):
@@ -28,12 +27,11 @@ def analyze_stock(symbol):
 
     fundamental_score = get_fundamental_score(symbol)
 
-    ai_score = predict_price_change(df)
-
-    total_score = pattern_score + fundamental_score + ai_score
+total_score = pattern_score + fundamental_score
 
     return {
         "ticker": symbol,
         "score": total_score,
         "patterns": detected
     }
+
