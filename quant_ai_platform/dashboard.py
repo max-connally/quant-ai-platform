@@ -3,6 +3,11 @@ import pandas as pd
 import yfinance as yf
 import plotly.graph_objects as go
 
+import os
+import sys
+
+sys.path.append(os.path.dirname(__file__))
+
 from scanner import analyze_stock
 from sentiment import get_sentiment
 from probability import profit_probability
@@ -82,6 +87,7 @@ if ticker:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 
 
