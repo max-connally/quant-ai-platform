@@ -9,11 +9,11 @@ import pandas as pd
 import yfinance as yf
 import plotly.graph_objects as go
 
-from scanner import analyze_stock
-from sentiment import get_sentiment
-from quant_ai_platform.probability import profit_probability
-from portfolio import build_portfolio
-from stock_universe import get_stock_universe
+from .scanner import analyze_stock
+from .sentiment import get_sentiment
+from .probability import profit_probability
+from .portfolio import build_portfolio
+from .stock_universe import get_stock_universe
 
 from streamlit_autorefresh import st_autorefresh
 
@@ -116,4 +116,5 @@ if ticker_input:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
