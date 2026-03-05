@@ -43,7 +43,7 @@ st.info(f"Next refresh in: {seconds_left} seconds")
 
 st.header("Top AI Opportunities")
 
-stocks = get_stock_universe()[:80]
+stocks = get_stock_universe()[:200]
 
 results = []
 
@@ -111,6 +111,7 @@ if ticker_input:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 
 
