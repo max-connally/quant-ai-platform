@@ -1,5 +1,17 @@
-def rank_stocks(stocks):
+def build_portfolio(df):
 
-    ranked = sorted(stocks,key=lambda x:x["score"],reverse=True)
+    if df.empty:
+        return "No portfolio suggestions available."
 
-    return ranked[:5]
+    top = df.sort_values("score", ascending=False).head(5)
+
+    portfolio = []
+
+    for _, row in top.iterrows():
+
+        portfolio.append({
+            "ticker": row["ticker"],
+            "allocation": "20%"
+        })
+
+    return portfolio
