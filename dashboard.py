@@ -5,11 +5,11 @@ import sys
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 
-from scanner import analyze_stock
-from sentiment import get_sentiment
-from probability import profit_probability
-from portfolio import build_portfolio
-from stock_universe import get_stock_universe
+from quant_ai_platform.scanner import analyze_stock
+from quant_ai_platform.sentiment import get_sentiment
+from quant_ai_platform.probability import profit_probability
+from quant_ai_platform.portfolio import build_portfolio
+from quant_ai_platform.stock_universe import get_stock_universe
 
 from streamlit_autorefresh import st_autorefresh
 
@@ -112,6 +112,7 @@ if ticker_input:
     )])
 
     st.plotly_chart(fig, use_container_width=True)
+
 
 
 
